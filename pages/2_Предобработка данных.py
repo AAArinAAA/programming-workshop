@@ -24,8 +24,7 @@ code = '''
 data.head()
 '''
 st.code(code, language='python')
-
-st.code(data2.head())
+st.dataframe(df2.head(5))
 
 
 st.markdown('Удалим столбцы, не несущие какую-либо информацию для обучения модели:')
@@ -35,4 +34,4 @@ data = data.drop(['id', 'name'])
 '''
 st.code(code, language='python')
 
-st.code(data2.head(5))
+st.dataframe(df2.head(5))

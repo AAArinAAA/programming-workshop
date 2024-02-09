@@ -37,7 +37,7 @@ st.code(code, language='python')
 
 st.dataframe(df2.head(5))
 
-st.markdown('Вывод статистической сводки по датасеты:')
+st.markdown('Вывод статистической сводки по датасету:')
 code = '''
 df2.describe()
 
@@ -46,3 +46,16 @@ data_described = df2.describe()
 st.code(code, language='python')
 
 st.dataframe(data_described)
+
+st.markdown('Заполняем пропущенные значения числами в интервале от минимального до максимального:')
+
+code = '''
+data['est_diameter_min'] = data['est_diameter_min'].map(lambda x: np.random.uniform(0, 38) if pd.isna(x) else x)
+data['est_diameter_max'] = data['est_diameter_max'].map(lambda x: np.random.uniform(0, 84) if pd.isna(x) else x)
+data['relative_velocity'] = data['relative_velocity'].map(lambda x: np.random.uniform(203, 230000) if pd.isna(x) else x)
+data['miss_distance'] = data['miss_distance'].map(lambda x: np.random.uniform(6745, 74798) if pd.isna(x) else x)
+data['absolute_magnitude'] = data['absolute_magnitude'].map(lambda x: np.random.uniform(9, 33) if pd.isna(x) else x)
+'''
+
+st.code(code, language='python') 
+st.code(df2.isna().sum().sort_values(ascending=False))

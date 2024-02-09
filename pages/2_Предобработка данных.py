@@ -56,6 +56,11 @@ data['relative_velocity'] = data['relative_velocity'].map(lambda x: np.random.un
 data['miss_distance'] = data['miss_distance'].map(lambda x: np.random.uniform(6745, 74798) if pd.isna(x) else x)
 data['absolute_magnitude'] = data['absolute_magnitude'].map(lambda x: np.random.uniform(9, 33) if pd.isna(x) else x)
 '''
+df2['est_diameter_min'] = df2['est_diameter_min'].map(lambda x: np.random.uniform(0, 38) if pd.isna(x) else x)
+df2['est_diameter_max'] = df2['est_diameter_max'].map(lambda x: np.random.uniform(0, 84) if pd.isna(x) else x)
+df2['relative_velocity'] = df2['relative_velocity'].map(lambda x: np.random.uniform(203, 230000) if pd.isna(x) else x)
+df2['miss_distance'] = df2['miss_distance'].map(lambda x: np.random.uniform(6745, 74798) if pd.isna(x) else x)
+df2['absolute_magnitude'] = df2['absolute_magnitude'].map(lambda x: np.random.uniform(9, 33) if pd.isna(x) else x)
 
 st.code(code, language='python') 
 st.code(df2.isna().sum().sort_values(ascending=False))

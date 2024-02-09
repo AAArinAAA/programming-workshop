@@ -17,7 +17,7 @@ data.isna().sum().sort_values(ascending=False)
 '''
 st.code(code, language='python')
 
-st.code(data2.isna().sum().sort_values(ascending=False))
+st.code(df2.isna().sum().sort_values(ascending=False))
 
 st.markdown('Вывод головы датасета:')
 code = '''
@@ -36,3 +36,13 @@ df2 = df2.drop(['id', 'name'], axis = 1)
 st.code(code, language='python')
 
 st.dataframe(df2.head(5))
+
+st.markdown('Вывод статистической сводки по датасеты:')
+code = '''
+df2.describe()
+
+'''
+data_described = df2.describe()
+st.code(code, language='python')
+
+st.dataframe(data_described)

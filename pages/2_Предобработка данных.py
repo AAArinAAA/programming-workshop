@@ -17,5 +17,5 @@ data.isna().sum().sort_values(ascending=False)
 '''
 st.code(code, language='python')
 
-st.markdown(data2.isna().sum().sort_values(ascending=False))
+st.code(data2.isna().sum().sort_values(ascending=False))
 

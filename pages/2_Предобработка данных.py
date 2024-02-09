@@ -11,12 +11,11 @@ st.header('Предобработка датасета для задачи кл�
 st.markdown('---')
 st.dataframe(df2)
 
+st.markdown('Вывод числа пропущенных значений')
 code = '''
 data.isna().sum().sort_values(ascending=False)
 '''
 st.code(code, language='python')
-st.markdown('Вывод числа пропущенных значений')
 
-str = data2.isna().sum().sort_values(ascending=False)
-st.markdown(str)
+st.markdown(data2.isna().sum().sort_values(ascending=False))
 

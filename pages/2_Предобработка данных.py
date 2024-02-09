@@ -64,3 +64,21 @@ df2['absolute_magnitude'] = df2['absolute_magnitude'].map(lambda x: np.random.un
 
 st.code(code, language='python') 
 st.code(df2.isna().sum().sort_values(ascending=False))
+
+
+st.markdown('Переведем в столбце целевого признака данные из True-False в 1-0')
+
+code = '''
+data.loc[(data['hazardous'] == "True"), 'hazardous'] = 1
+data.loc[(data['hazardous'] == "False"), 'hazardous'] = 0
+data['hazardous'] = data['hazardous'].astype(int)
+'''
+df2.loc[(df2['hazardous'] == "True"), 'hazardous'] = 1
+df2.loc[(df2['hazardous'] == "False"), 'hazardous'] = 0
+df2['hazardous'] = df2['hazardous'].astype(int)
+
+st.code(code, language='python')
+
+st.dataframe(df2.head(5))
+
+

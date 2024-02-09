@@ -11,7 +11,7 @@ st.header('Предобработка датасета для задачи кл�
 st.markdown('---')
 st.dataframe(df2)
 
-st.markdown('Вывод числа пропущенных значений')
+st.markdown('Вывод числа пропущенных значений:')
 code = '''
 data.isna().sum().sort_values(ascending=False)
 '''
@@ -19,3 +19,20 @@ st.code(code, language='python')
 
 st.code(data2.isna().sum().sort_values(ascending=False))
 
+st.markdown('Вывод головы датасета:')
+code = '''
+data.head()
+'''
+st.code(code, language='python')
+
+st.code(data2.head())
+
+
+st.markdown('Удалим столбцы, не несущие какую-либо информацию для обучения модели:')
+code = '''
+data = data.drop(['id', 'name'])
+
+'''
+st.code(code, language='python')
+
+st.code(data2.head(5))

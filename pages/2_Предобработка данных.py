@@ -56,6 +56,7 @@ data['est_diameter_max'] = data['est_diameter_max'].map(lambda x: np.random.unif
 data['relative_velocity'] = data['relative_velocity'].map(lambda x: np.random.uniform(203, 230000) if pd.isna(x) else x)
 data['miss_distance'] = data['miss_distance'].map(lambda x: np.random.uniform(6745, 74798) if pd.isna(x) else x)
 data['absolute_magnitude'] = data['absolute_magnitude'].map(lambda x: np.random.uniform(9, 33) if pd.isna(x) else x)
+data.isna().sum().sort_values(ascending=False)
 '''
 df2['est_diameter_min'] = df2['est_diameter_min'].map(lambda x: np.random.uniform(0, 38) if pd.isna(x) else x)
 df2['est_diameter_max'] = df2['est_diameter_max'].map(lambda x: np.random.uniform(0, 84) if pd.isna(x) else x)
@@ -115,3 +116,12 @@ fig, ax = plt.subplots()
 ax.hist(df2['est_diameter_min'], bins=20)
 
 st.pyplot(fig)
+
+
+st.markdown('Сохраним предобработанный датасет с новым названием "Data_preprocessed.csv"')
+
+code = '''
+data.to_csv('Data_preprocessed.csv', index= False)
+'''
+
+st.markdown('На этом предобработка завершена. В результате мы получили чистый датасет без выбросов и пустых значений, готовый к использованию для решения задачи регрессии')

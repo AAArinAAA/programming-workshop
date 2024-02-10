@@ -16,6 +16,9 @@ st.write("Тепловая карта по матрице корреляции �
 
 
 correlation_matrix = data.corr()
+
+st.code(correlation_matrix, language='python')
+
 fig = sns.heatmap(correlation_matrix, annot=True, cmap="YlGnBu", fmt=".2f")
 
 st.pyplot(fig)

@@ -35,9 +35,11 @@ if df is not None:
     list=[]
     df = df.drop('Appliances', axis = 1)
 
-    for i in df.columns[:-1]:
+    for i in df.columns[:]:
         a = st.slider(i,float(df[i].min()), float(math.ceil(df[i].max())),float(df[i].max()/2))
         list.append(a)
+
+    
 
     list = np.array(list).reshape(1,-1)
     list=list.tolist()

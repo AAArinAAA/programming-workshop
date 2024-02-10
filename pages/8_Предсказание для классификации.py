@@ -31,5 +31,9 @@ if df is not None:
             knn_model = pickle.load(file)
         if knn_model.predict(list) == 0:
             st.success("Объект не опасен")
+            st.markdown('Площадь под кривой auc-roc:')
+            st.code(0.8663573488749037, language='python')
         else:
             st.success("Объект опасен")
+            st.markdown('Площадь под кривой auc-roc:')
+            st.code(0.8663573488749037, language='python')

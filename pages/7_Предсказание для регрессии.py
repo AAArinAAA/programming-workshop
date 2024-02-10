@@ -4,7 +4,7 @@ import math
 import pickle
 from sklearn.model_selection import train_test_split 
 import streamlit as st 
-
+from sklearn.metrics import * 
 
 df= pd.read_csv('energy_task_preprocessed.csv')
 df = df.drop('date', axis = 1)
@@ -52,3 +52,5 @@ if df is not None:
             baesian_model = pickle.load(file)
             y_pred = baesian_model.predict(list)
             st.success(y_pred)
+            st.markdown('mean_absolute_error:')
+            st.code(52.702360109718384, language='python')

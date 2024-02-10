@@ -91,11 +91,6 @@ Q3 = outlier.quantile(0.75)
 IQR = Q3-Q1
 data = outlier[~((outlier < (Q1 - 1.5 * IQR)) |(outlier > (Q3 + 1.5 * IQR))).any(axis=1)]
 '''
-outlier = df2[['est_diameter_min', 'est_diameter_max', 'relative_velocity', 'miss_distance', 'absolute_magnitude']]
-Q1 = outlier.quantile(0.25)
-Q3 = outlier.quantile(0.75)
-IQR = Q3-Q1
-df2 = outlier[~((outlier < (Q1 - 1.5 * IQR)) |(outlier > (Q3 + 1.5 * IQR))).any(axis=1)]
 
 st.code(code, language='python')
 
@@ -107,6 +102,12 @@ fig, ax = plt.subplots()
 ax.hist(df2['est_diameter_min'], bins=20)
 
 st.pyplot(fig)
+
+outlier = df2[['est_diameter_min', 'est_diameter_max', 'relative_velocity', 'miss_distance', 'absolute_magnitude']]
+Q1 = outlier.quantile(0.25)
+Q3 = outlier.quantile(0.75)
+IQR = Q3-Q1
+df2 = outlier[~((outlier < (Q1 - 1.5 * IQR)) |(outlier > (Q3 + 1.5 * IQR))).any(axis=1)]
 
 st.markdown('ПОСЛЕ:')
 

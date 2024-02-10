@@ -1,3 +1,4 @@
+from matplotlib import pyplot as plt
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -81,4 +82,35 @@ st.code(code, language='python')
 
 st.dataframe(df2.head(5))
 
+st.markdown('Проведем квантильную очистку для всех столбцов, содержащих числовые значения')
 
+code = '''
+outlier = data[['est_diameter_min', 'est_diameter_max', 'relative_velocity', 'miss_distance', 'absolute_magnitude']]
+Q1 = outlier.quantile(0.25)
+Q3 = outlier.quantile(0.75)
+IQR = Q3-Q1
+data = outlier[~((outlier < (Q1 - 1.5 * IQR)) |(outlier > (Q3 + 1.5 * IQR))).any(axis=1)]
+'''
+outlier = df2[['est_diameter_min', 'est_diameter_max', 'relative_velocity', 'miss_distance', 'absolute_magnitude']]
+Q1 = outlier.quantile(0.25)
+Q3 = outlier.quantile(0.75)
+IQR = Q3-Q1
+df2 = outlier[~((outlier < (Q1 - 1.5 * IQR)) |(outlier > (Q3 + 1.5 * IQR))).any(axis=1)]
+
+st.code(code, language='python')
+
+st.write("Гистограмма до/после обработки (признак 'est_diameter_min'):")
+
+st.markdown('ДО:')
+
+fig, ax = plt.subplots()
+ax.hist(df2['est_diameter_min'], bins=20)
+
+st.pyplot(fig)
+
+st.markdown('ПОСЛЕ:')
+
+fig, ax = plt.subplots()
+ax.hist(df2['est_diameter_min'], bins=20)
+
+st.pyplot(fig)

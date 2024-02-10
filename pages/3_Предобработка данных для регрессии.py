@@ -121,3 +121,13 @@ fig, ax = plt.subplots()
 ax.hist(data['Appliances'], bins=20)
 
 st.pyplot(fig)
+
+st.markdown('Сохраним предобработанный датасет с новым названием "Data2_preprocessed.csv"')
+
+code = '''
+data.to_csv('Data2_preprocessed.csv', index= False)
+'''
+st.code(code, language='python')
+
+
+st.markdown('На этом предобработка завершена. В результате мы получили чистый датасет без выбросов и пустых значений, готовый к использованию для решения задачи регрессии')

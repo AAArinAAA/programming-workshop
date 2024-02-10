@@ -18,7 +18,7 @@ st.area_chart(chart_data)
 
 st.write("Диаграмма рассеяния для скорости, расстояния и светимости")
 
-chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["relative_velocity", "miss_distance", "absolute_magnitude"])
+chart_data = pd.DataFrame(np.random.randn(100, 3), columns=["relative_velocity", "miss_distance", "absolute_magnitude"])
 st.scatter_chart(chart_data)
 
 st.write("Гистограмма предсказываемого признака")

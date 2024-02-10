@@ -17,7 +17,7 @@ if df is not None:
     list=[]
 
     for i in df.columns[:-1]:
-        a = st.slider(i,df[i].min(), math.ceil(df[i].max()),df[i].max()/2)
+        a = st.slider(i,float(df[i].min()), float(math.ceil(df[i].max())),float(df[i].max()/2))
         list.append(a)
 
     list = np.array(list).reshape(1,-1)

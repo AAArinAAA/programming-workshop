@@ -7,7 +7,7 @@ import streamlit as st
 
 
 df= pd.read_csv('energy_task_preprocessed.csv')
-
+df = df.drop('date', axis = 1)
 if df is not None:
     st.header("Датасет")
     st.dataframe(df)

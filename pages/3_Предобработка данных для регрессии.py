@@ -82,3 +82,42 @@ ax.hist(data['Appliances'], bins=20)
 
 st.pyplot(fig)
 
+st.markdown('Проведем квантильную очистку столбцов:')
+
+code = '''
+outlier=data[[ 'Appliances', 'lights', 'T1', 'RH_1', 'T2', 'RH_2', 'T3',
+       'RH_3', 'T4', 'RH_4', 'T5', 'RH_5', 'T6', 'RH_6', 'T7', 'RH_7', 'T8',
+       'RH_8', 'T9', 'RH_9', 'T_out', 'Press_mm_hg', 'RH_out', 'Windspeed',
+       'Visibility', 'Tdewpoint']]
+Q1 = outlier.quantile(0.25)
+Q3 = outlier.quantile(0.75)
+IQR = Q3-Q1
+data = outlier[~((outlier < (Q1 - 1.5 * IQR)) |(outlier > (Q3 + 1.5 * IQR))).any(axis=1)]
+'''
+
+st.code(code, language='python')
+
+st.write("Гистограмма до/после обработки (признак 'Appliances'):")
+
+st.markdown('ДО:')
+
+fig, ax = plt.subplots()
+ax.hist(data['Appliances'], bins=20)
+
+st.pyplot(fig)
+
+outlier=data[[ 'Appliances', 'lights', 'T1', 'RH_1', 'T2', 'RH_2', 'T3',
+       'RH_3', 'T4', 'RH_4', 'T5', 'RH_5', 'T6', 'RH_6', 'T7', 'RH_7', 'T8',
+       'RH_8', 'T9', 'RH_9', 'T_out', 'Press_mm_hg', 'RH_out', 'Windspeed',
+       'Visibility', 'Tdewpoint']]
+Q1 = outlier.quantile(0.25)
+Q3 = outlier.quantile(0.75)
+IQR = Q3-Q1
+data = outlier[~((outlier < (Q1 - 1.5 * IQR)) |(outlier > (Q3 + 1.5 * IQR))).any(axis=1)]
+
+st.markdown('ПОСЛЕ:')
+
+fig, ax = plt.subplots()
+ax.hist(data['Appliances'], bins=20)
+
+st.pyplot(fig)

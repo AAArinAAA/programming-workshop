@@ -33,6 +33,7 @@ if df is not None:
 
     st.code(code, language='python')
     list=[]
+    df = df.drop('Appliances', axis = 1)
 
     for i in df.columns[:-1]:
         a = st.slider(i,float(df[i].min()), float(math.ceil(df[i].max())),float(df[i].max()/2))

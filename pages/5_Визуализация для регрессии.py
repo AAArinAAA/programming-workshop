@@ -18,7 +18,7 @@ st.image("heat_map.png")
 
 st.write("Диаграмма рассеяния для электроприборов и освещения")
 
-chart_data = pd.DataFrame(np.random.randn(20, 3), columns=["Appliances", "lights"])
+chart_data = pd.DataFrame(np.random.randn(20, 2), columns=["Appliances", "lights"])
 st.scatter_chart(chart_data)
 
 st.write("Гистограмма предсказываемого признака")

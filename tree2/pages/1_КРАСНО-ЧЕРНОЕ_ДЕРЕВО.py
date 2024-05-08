@@ -104,6 +104,7 @@ class RedBlackTree():
                     self.right_rotate(x.parent)
                     x = self.root
         x.color = 0
+        display_tree(self.root)
 
     def __rb_transplant(self, u, v):
         if u.parent == None:
@@ -155,13 +156,16 @@ class RedBlackTree():
             y.color = z.color
         if y_original_color == 0:
             self.delete_fix(x)
-
-        # Function to handle insertion
-    def insert_key(key):
-        new_node = Node(key)
-        tree.insert(new_node)
-        st.success(f"Key {key} inserted successfully!")
-        display_tree()
+    
+    def insert(self, k):
+        y = self.TNULL
+        x = self.root
+        while x!= self.TNULL:
+            y = x
+            if k.item < x.item:
+                x = x.left
+            else:
+                x = x.right
 
     # Balance the tree after insertion
     def fix_insert(self, k):
@@ -198,6 +202,7 @@ class RedBlackTree():
             if k == self.root:
                 break
         self.root.color = 0
+        display_tree(self.root)
 
     # Printing the tree
     def __print_helper(self, node, indent, last):

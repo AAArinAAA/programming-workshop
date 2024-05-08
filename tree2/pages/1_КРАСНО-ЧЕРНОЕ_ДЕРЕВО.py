@@ -3,14 +3,9 @@ import streamlit as st
 import time
 from enum import Enum
 import math
+import sys
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
-
-from enum import Enum
-import time
-import math
-
-import sys
 
 # Node creation
 class Node():
@@ -31,28 +26,28 @@ class RedBlackTree():
 
     # Preorder
     def pre_order_helper(self, node):
-        if node != TNULL:
-            sys.stdout.write(node.item + " ")
+        if node != self.TNULL:
+            sys.stdout.write(str(node.item) + " ")
             self.pre_order_helper(node.left)
             self.pre_order_helper(node.right)
 
     # Inorder
     def in_order_helper(self, node):
-        if node != TNULL:
+        if node != self.TNULL:
             self.in_order_helper(node.left)
-            sys.stdout.write(node.item + " ")
+            sys.stdout.write(str(node.item) + " ")
             self.in_order_helper(node.right)
 
     # Postorder
     def post_order_helper(self, node):
-        if node != TNULL:
+        if node != self.TNULL:
             self.post_order_helper(node.left)
             self.post_order_helper(node.right)
-            sys.stdout.write(node.item + " ")
+            sys.stdout.write(str(node.item) + " ")
 
     # Search the tree
     def search_tree_helper(self, node, key):
-        if node == TNULL or key == node.item:
+        if node == self.TNULL or key == node.item:
             return node
 
         if key < node.item:
@@ -222,7 +217,7 @@ class RedBlackTree():
     def postorder(self):
         self.post_order_helper(self.root)
 
-    def searchTree(self, k):
+    def search(self, k):
         return self.search_tree_helper(self.root, k)
 
     def minimum(self, node):
@@ -235,216 +230,52 @@ class RedBlackTree():
             node = node.right
         return node
 
-    def successor(self, x):
-        if x.right != self.TNULL:
-            return self.minimum(x.right)
+# Streamlit app
+def main():
+    st.title("Red-Black Tree Operations")
+    tree = RedBlackTree()  # Instantiate RedBlackTree
 
-        y = x.parent
-        while y != self.TNULL and x == y.right:
-            x = y
-            y = y.parent
-        return y
+    # Function to display tree
+    def display_tree():
+        st.write("Red-Black Tree:")
+        st.write("```")
+        tree.__print_helper(tree.root, "", True)
+        st.write("```")
 
-    def predecessor(self,  x):
-        if (x.left != self.TNULL):
-            return self.maximum(x.left)
+    # Function to handle insertion
+    def insert_key(key):
+        tree.insert(Node(key))
+        st.success(f"Key {key} inserted successfully!")
+        display_tree()
 
-        y = x.parent
-        while y != self.TNULL and x == y.left:
-            x = y
-            y = y.parent
+    # Function to handle deletion
+    def delete_key(key):
+        tree.delete_node_helper(tree.root, key)
+        st.success(f"Key {key} deleted successfully!")
+        display_tree()
 
-        return y
-
-    def left_rotate(self, x):
-        y = x.right
-        x.right = y.left
-        if y.left != self.TNULL:
-            y.left.parent = x
-
-        y.parent = x.parent
-        if x.parent == None:
-            self.root = y
-        elif x == x.parent.left:
-            x.parent.left = y
+    # Function to handle search
+    def search_key(key):
+        result = tree.search(key)
+        if result != tree.TNULL:
+            st.success(f"Key {key} found in the tree!")
         else:
-            x.parent.right = y
-        y.left = x
-        x.parent = y
+            st.error(f"Key {key} not found in the tree.")
 
-    def right_rotate(self, x):
-        y = x.left
-        x.left = y.right
-        if y.right != self.TNULL:
-            y.right.parent = x
+    # Streamlit UI elements
+    operation = st.selectbox("Select Operation", ["Insert", "Delete", "Search"])
 
-        y.parent = x.parent
-        if x.parent == None:
-            self.root = y
-        elif x == x.parent.right:
-            x.parent.right = y
-        else:
-            x.parent.left = y
-        y.right = x
-        x.parent = y
+    if operation == "Insert":
+        key_to_insert = st.number_input("Enter Key to Insert")
+        if st.button("Insert"):
+            insert_key(key_to_insert)
 
-    def insert(self, key):
-        node = Node(key)
-        node.parent = None
-        node.item = key
-        node.left = self.TNULL
-        node.right = self.TNULL
-        node.color = 1
+    elif operation == "Delete":
+        key_to_delete = st.number_input("Enter Key to Delete")
+        if st.button("Delete"):
+            delete_key(key_to_delete)
 
-        y = None
-        x = self.root
-
-        while x != self.TNULL:
-            y = x
-            if node.item < x.item:
-                x = x.left
-            else:
-                x = x.right
-
-        node.parent = y
-        if y == None:
-            self.root = node
-        elif node.item < y.item:
-            y.left = node
-        else:
-            y.right = node
-
-        if node.parent == None:
-            node.color = 0
-            return
-
-        if node.parent.parent == None:
-            return
-
-        self.fix_insert(node)
-
-    def get_root(self):
-        return self.root
-
-    def delete_node(self, item):
-        self.delete_node_helper(self.root, item)
-
-    def print_tree(self):
-        self.__print_helper(self.root, "", True)
-
-
-if __name__ == "__main__":
-    bst = RedBlackTree()
-
-    bst.insert(55)
-    bst.insert(40)
-    bst.insert(65)
-    bst.insert(60)
-    bst.insert(75)
-    bst.insert(57)
-
-    bst.print_tree()
-
-    print("\nAfter deleting an element")
-    bst.delete_node(40)
-    bst.print_tree()
-
-
-session = st.session_state
-
-if 'tree' not in session:
-    session.tree = RedBlackTree()
-
-if 'inserted_values' not in session:
-    session.inserted_values = []
-
-if 'session_iteration' not in session:
-    session.session_iteration = 0
-
-sidebar = st.sidebar
-
-sidebar.subheader('Вставка чисел')
-sidebar.text_input(label='', key='insert_field', label_visibility='collapsed')
-def clear_insert_text():
-    session.new_values = session.insert_field
-    session["insert_field"] = ""
-sidebar.button(label='Вставить', key='insert_button', on_click=clear_insert_text, use_container_width=True)
-
-sidebar.subheader('Удаление чисел')
-sidebar.text_input(
-    label='',
-    key='values2delete',
-    label_visibility='collapsed'
-)
-def clear_delete_text():
-    session.deleting_values = session.values2delete
-    session["values2delete"] = ""
-sidebar.button(label='Удалить', key='delete_button', on_click=clear_delete_text, use_container_width=True)
-
-sidebar.subheader('Поиск числа')
-sidebar.text_input(
-    label='',
-    key='search_value',
-    label_visibility='visible'
-)
-sidebar.button(label='Поиск', key='search_button', on_click=clear_delete_text, use_container_width=True)
-
-if session.insert_button:
-    try:
-        new_values = set([
-            int(value) for value in 
-                session.new_values.split()
-        ])
-    except ValueError as e:
-        new_values = None
-        st.error(f'Неправильный ввод: {e}')
-
-    correct_values = []
-    wrong_values = []
-    for value in new_values:
-        try:
-            session.tree.insert(value)
-            session.inserted_values.append(value)
-            correct_values.append(value)
-        except ValueError:
-            wrong_values.append(value)
-    if correct_values:
-        st.success(f'Успешно добавлено: {correct_values}')
-    if wrong_values:
-        st.warning(f'Ошибка выполнения')
-
-if session.delete_button:
-    try:
-        values2delete = set([
-            int(value) for value in 
-                session.deleting_values.split()
-        ])
-    except ValueError as e:
-        values2delete = None
-        st.error(f'Ошибка выполнения')
-
-    correct_values = []
-    wrong_values = []
-    for value in values2delete:
-        try:
-            session.tree.delete(value)
-            session.inserted_values.remove(value)
-            correct_values.append(value)
-        except ValueError:
-            wrong_values.append(value)
-    if correct_values:
-        st.success(f'Удалено: {correct_values}')
-    if wrong_values:
-        st.warning(f'Ошибка выполнения')
-
-search_value = session.search_value
-if session.search_button:
-    try:
-        search_value = int(search_value)
-        found_node = session.tree.search(search_value)
-        if found_node:
-            st.success(f'Число {search_value} найдено')
-        else:
-            st.warning(f'Такого числа нет в дереве')
-    except ValueError:
-        st.error('Ошибка выполнения')
+    elif operation == "Search":
+        key_to_search = st.number_input("Enter Key to Search")
+        if st.button("Search"):
+            search_key(key_to_search)

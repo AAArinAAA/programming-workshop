@@ -7,6 +7,9 @@ import sys
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
+import sys
+
+
 # Node creation
 class Node():
     def __init__(self, item):
@@ -15,6 +18,7 @@ class Node():
         self.left = None
         self.right = None
         self.color = 1
+
 
 class RedBlackTree():
     def __init__(self):
@@ -27,7 +31,7 @@ class RedBlackTree():
     # Preorder
     def pre_order_helper(self, node):
         if node != self.TNULL:
-            sys.stdout.write(str(node.item) + " ")
+            sys.stdout.write(node.item + " ")
             self.pre_order_helper(node.left)
             self.pre_order_helper(node.right)
 
@@ -35,7 +39,7 @@ class RedBlackTree():
     def in_order_helper(self, node):
         if node != self.TNULL:
             self.in_order_helper(node.left)
-            sys.stdout.write(str(node.item) + " ")
+            sys.stdout.write(node.item + " ")
             self.in_order_helper(node.right)
 
     # Postorder
@@ -43,7 +47,7 @@ class RedBlackTree():
         if node != self.TNULL:
             self.post_order_helper(node.left)
             self.post_order_helper(node.right)
-            sys.stdout.write(str(node.item) + " ")
+            sys.stdout.write(node.item + " ")
 
     # Search the tree
     def search_tree_helper(self, node, key):
@@ -88,7 +92,7 @@ class RedBlackTree():
                     self.right_rotate(x.parent)
                     s = x.parent.left
 
-                if s.right.color == 0 and s.right.color == 0:
+                if s.right.color == 0 and s.left.color == 0:
                     s.color = 1
                     x = x.parent
                 else:
@@ -155,16 +159,6 @@ class RedBlackTree():
             y.color = z.color
         if y_original_color == 0:
             self.delete_fix(x)
-    
-    def insert(self, k):
-        y = self.TNULL
-        x = self.root
-        while x!= self.TNULL:
-            y = x
-            if k.item < x.item:
-                x = x.left
-            else:
-                x = x.right
 
     # Balance the tree after insertion
     def fix_insert(self, k):
@@ -202,22 +196,6 @@ class RedBlackTree():
                 break
         self.root.color = 0
 
-    # Printing the tree
-    def __print_helper(self, node, indent, last):
-        if node != self.TNULL:
-            sys.stdout.write(indent)
-            if last:
-                sys.stdout.write("R----")
-                indent += "     "
-            else:
-                sys.stdout.write("L----")
-                indent += "|    "
-
-            s_color = "RED" if node.color == 1 else "BLACK"
-            print(str(node.item) + "(" + s_color + ")")
-            self.__print_helper(node.left, indent, False)
-            self.__print_helper(node.right, indent, True)
-
     def preorder(self):
         self.pre_order_helper(self.root)
 
@@ -239,6 +217,109 @@ class RedBlackTree():
         while node.right != self.TNULL:
             node = node.right
         return node
+
+    def successor(self, x):
+        if x.right != self.TNULL:
+            return self.minimum(x.right)
+
+        y = x.parent
+        while y != self.TNULL and x == y.right:
+            x = y
+            y = y.parent
+        return y
+
+    def predecessor(self,  x):
+        if (x.left != self.TNULL):
+            return self.maximum(x.left)
+
+        y = x.parent
+        while y != self.TNULL and x == y.left:
+            x = y
+            y = y.parent
+
+        return y
+
+    def left_rotate(self, x):
+        y = x.right
+        x.right = y.left
+        if y.left != self.TNULL:
+            y.left.parent = x
+
+        y.parent = x.parent
+        if x.parent == None:
+            self.root = y
+        elif x == x.parent.left:
+            x.parent.left = y
+        else:
+            x.parent.right = y
+        y.left = x
+        x.parent = y
+
+    def right_rotate(self, x):
+        y = x.left
+        x.left = y.right
+        if y.right != self.TNULL:
+            y.right.parent = x
+
+        y.parent = x.parent
+        if x.parent == None:
+            self.root = y
+        elif x == x.parent.right:
+            x.parent.right = y
+        else:
+            x.parent.left = y
+        y.right = x
+        x.parent = y
+
+    def insert(self, key):
+        node = Node(key)
+        node.parent = None
+        node.item = key
+        node.left = self.TNULL
+        node.right = self.TNULL
+        node.color = 1
+
+        y = None
+        x = self.root
+
+        while x != self.TNULL:
+            y = x
+            if node.item < x.item:
+                x = x.left
+            else:
+                x = x.right
+
+        node.parent = y
+        if y == None:
+            self.root = node
+        elif node.item < y.item:
+            y.left = node
+        else:
+            y.right = node
+
+        if node.parent == None:
+            node.color = 0
+            return
+
+        if node.parent.parent == None:
+            return
+
+        self.fix_insert(node)
+
+    def delete(self, item):
+        self.delete_node_helper(self.root, item)
+################
+
+def visualize_red_black_tree_dot_helper(node, dot, tree):
+    if node is not None:
+        color = "red" if node.color == 1 else "black"
+        dot.node(str(node.item), str(node.item), style='filled', fillcolor=color)
+        if node.left != tree.TNULL:
+            dot.edge(str(node.item), str(node.left.item))
+            visualize_red_black_tree_dot_helper(node.left, dot, tree)
+        if node.right != tree.TNULL:
+            dot.edge(str(node.item), str(node.right.item))
+            visualize_red_black_tree_dot_helper(node.right, dot, tree)
 
 # Streamlit app
 

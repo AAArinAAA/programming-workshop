@@ -389,20 +389,6 @@ sidebar.text_input(
 )
 sidebar.button(label='Поиск', key='search_button', on_click=clear_delete_text, use_container_width=True)
 
-figsize = 12
-margins = 0
-font_size = 10
-node_size = 1000
-
-def visualization():
-    tree = session.tree
-    g, pos, options = tree.realize(font_size, node_size)
-    fig = plt.figure(figsize=[figsize]*2)
-    plt.axis('off')
-    nx.draw_networkx(g, pos, **options)
-    plt.margins(margins)
-    st.pyplot(fig)
-
 if session.insert_button:
     try:
         new_values = set([
@@ -462,6 +448,3 @@ if session.search_button:
             st.warning(f'Такого числа нет в дереве')
     except ValueError:
         st.error('Ошибка выполнения')
-
-if session.inserted_values:
-    visualization()

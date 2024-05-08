@@ -279,3 +279,7 @@ def main():
         key_to_search = st.number_input("Enter Key to Search")
         if st.button("Search"):
             search_key(key_to_search)
+
+
+
+    main()

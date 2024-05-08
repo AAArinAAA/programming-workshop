@@ -156,6 +156,13 @@ class RedBlackTree():
         if y_original_color == 0:
             self.delete_fix(x)
 
+        # Function to handle insertion
+    def insert_key(key):
+        new_node = Node(key)
+        tree.insert(new_node)
+        st.success(f"Key {key} inserted successfully!")
+        display_tree()
+
     # Balance the tree after insertion
     def fix_insert(self, k):
         while k.parent.color == 1:

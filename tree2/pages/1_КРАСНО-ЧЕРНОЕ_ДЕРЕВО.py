@@ -247,6 +247,8 @@ class RedBlackTree():
 st.title("Red-Black Tree Operations")
 tree = RedBlackTree()  # Instantiate RedBlackTree
 
+
+
 # Function to display tree
 def display_tree():
     st.write("Red-Black Tree:")
@@ -291,3 +293,29 @@ elif operation == "Search":
     key_to_search = st.number_input("Enter Key to Search")
     if st.button("Search"):
         search_key(key_to_search)
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+from graphviz import Digraph
+
+def draw_tree(tree):
+    dot = Digraph()
+    draw_tree_recursive(dot, None, tree.root)
+    dot.render('red_black_tree', format='png', cleanup=True)
+    img = plt.imread('red_black_tree.png')
+    plt.figure(figsize=(10, 6))
+    plt.imshow(img)
+    plt.axis('off')
+    plt.title("Red-Black Tree Visualization")
+    plt.show()
+    plt.savefig('1.png')
+
+
+def draw_tree_recursive(dot, parent, node):
+    if node != tree.TNULL:
+        dot.node(str(node.item), label=str(node.item), style='filled', color='red' if node.color == 1 else 'black')
+        if parent is not None:
+            dot.edge(str(parent.item), str(node.item))
+        draw_tree_recursive(dot, node, node.left)
+        draw_tree_recursive(dot, node, node.right)

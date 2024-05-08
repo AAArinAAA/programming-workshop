@@ -231,55 +231,51 @@ class RedBlackTree():
         return node
 
 # Streamlit app
-def main():
-    st.title("Red-Black Tree Operations")
-    tree = RedBlackTree()  # Instantiate RedBlackTree
 
-    # Function to display tree
-    def display_tree():
-        st.write("Red-Black Tree:")
-        st.write("```")
-        tree.__print_helper(tree.root, "", True)
-        st.write("```")
+st.title("Red-Black Tree Operations")
+tree = RedBlackTree()  # Instantiate RedBlackTree
 
-    # Function to handle insertion
-    def insert_key(key):
-        tree.insert(Node(key))
-        st.success(f"Key {key} inserted successfully!")
-        display_tree()
+# Function to display tree
+def display_tree():
+    st.write("Red-Black Tree:")
+    st.write("```")
+    tree.__print_helper(tree.root, "", True)
+    st.write("```")
 
-    # Function to handle deletion
-    def delete_key(key):
-        tree.delete_node_helper(tree.root, key)
-        st.success(f"Key {key} deleted successfully!")
-        display_tree()
+# Function to handle insertion
+def insert_key(key):
+    tree.insert(Node(key))
+    st.success(f"Key {key} inserted successfully!")
+    display_tree()
 
-    # Function to handle search
-    def search_key(key):
-        result = tree.search(key)
-        if result != tree.TNULL:
-            st.success(f"Key {key} found in the tree!")
-        else:
-            st.error(f"Key {key} not found in the tree.")
+# Function to handle deletion
+def delete_key(key):
+    tree.delete_node_helper(tree.root, key)
+    st.success(f"Key {key} deleted successfully!")
+    display_tree()
 
-    # Streamlit UI elements
-    operation = st.selectbox("Select Operation", ["Insert", "Delete", "Search"])
+# Function to handle search
+def search_key(key):
+    result = tree.search(key)
+    if result != tree.TNULL:
+        st.success(f"Key {key} found in the tree!")
+    else:
+        st.error(f"Key {key} not found in the tree.")
 
-    if operation == "Insert":
-        key_to_insert = st.number_input("Enter Key to Insert")
-        if st.button("Insert"):
-            insert_key(key_to_insert)
+# Streamlit UI elements
+operation = st.selectbox("Select Operation", ["Insert", "Delete", "Search"])
 
-    elif operation == "Delete":
-        key_to_delete = st.number_input("Enter Key to Delete")
-        if st.button("Delete"):
-            delete_key(key_to_delete)
+if operation == "Insert":
+    key_to_insert = st.number_input("Enter Key to Insert")
+    if st.button("Insert"):
+        insert_key(key_to_insert)
 
-    elif operation == "Search":
-        key_to_search = st.number_input("Enter Key to Search")
-        if st.button("Search"):
-            search_key(key_to_search)
+elif operation == "Delete":
+    key_to_delete = st.number_input("Enter Key to Delete")
+    if st.button("Delete"):
+        delete_key(key_to_delete)
 
-
-
-    main()
+elif operation == "Search":
+    key_to_search = st.number_input("Enter Key to Search")
+    if st.button("Search"):
+        search_key(key_to_search)

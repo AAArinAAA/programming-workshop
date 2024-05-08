@@ -12,281 +12,345 @@ import networkx as nx
 import time
 import math
 
-class Color(Enum):
-    Black = 'black'
-    Red = 'red'
+import sys
 
-class Position:
-	def __init__(self, x: int, y: int) -> None:
-		self.x = x
-		self.y = y
+# Node creation
+class Node():
+    def __init__(self, item):
+        self.item = item
+        self.parent = None
+        self.left = None
+        self.right = None
+        self.color = 1
 
-	def __radd__(self, obj):
-		if isinstance(obj, Position):
-			return Position(self.x + obj.x, self.y + obj.y)
-		elif isinstance(obj, tuple):
-			return Position(self.x + obj[0], self.y + obj[1])
-		raise TypeError(f'unsupported operand type(s) for +: Position and {type(obj)}')
-		
-	def __repr__(self) -> str:
-		return f'<Position{self.value}>'
-
-	@property
-	def value(self) -> tuple:
-		return (self.x, self.y)
-
-class Node:
-    def __init__(self, father=None) -> None:
-        self.color = Color.Black
-        self.father: Node | None = father
-        self.left: Node | None = None
-        self._position: Position | None = None
-        self.right: Node | None = None
-        self._value: int | None = None
-
-    def __bool__(self) -> bool:
-        return bool(self.value) or self.value == 0
-
-    def __eq__(self, obj) -> bool:
-        if isinstance(obj, Node):
-            return self.value == obj.value if self or obj else self is obj
-        elif isinstance(obj, int):
-            return self.value == obj
-        return False
-
-    def __gt__(self, obj) -> bool:
-        if not isinstance(obj, (Node, int)):
-            raise ValueError('Object {} not in [Node, int] type'.format(obj))
-        return self.value > obj.value if isinstance(obj, Node) else self.value > obj
-
-    def __hash__(self) -> int:
-        return object.__hash__(self)
-
-    def __lt__(self, obj) -> bool:
-        if not isinstance(obj, (Node, int)):
-            raise ValueError('Object {} not in [Node, int] type'.format(obj))
-        return self.value < obj.value if isinstance(obj, Node) else self.value < obj
-
-    def __repr__(self) -> str:
-        if self:
-            return f'<{self.color.name}.Node: {self.value}>'
-        elif self.father:
-            side = 'Left' if self.is_left else 'Right'
-            return f'<{side}.List(father={self.father.value})>'
-        return '<Empty root>'
-
-    def __str__(self) -> str:
-        return str(self.value) if self else 'n'
-
-    def child(self, value: int):
-        return self.left if value < self else self.right
-
-    @property
-    def brother(self):
-        if not self.father:
-            return None
-        return self.father.right if self.is_left else self.father.left
-
-    @property
-    def children_count(self) -> int:
-        return bool(self.right) + bool(self.left)
-
-    @property
-    def grandpa(self):
-        return self.father.father if self.father else None
-
-    @property
-    def is_black(self) -> bool:
-        return self.color == Color.Black
-
-    @property
-    def is_left(self) -> bool:
-        return bool(self.father) and self is self.father.left
-
-    @property
-    def is_red(self) -> bool:
-        return self.color == Color.Red
-
-    @property
-    def position(self) -> Position:
-        if not self.father:
-            return self._position
-        left = (-1)**self.is_left
-        pos = self.father.position.value
-        return pos + Position(left * 2**(pos[1] - 1), -1)
-    
-    def set_position(self, count: int):
-        height = int(2 * math.log2(count + 1))
-        self._position = Position(2**height - 1, height)
-
-    @property
-    def uncle(self):
-        return self.father.brother if self.father else None
-
-    @property
-    def value(self) -> int:
-        return self._value
-
-    @value.setter
-    def value(self, value: int) -> None:
-        self._value = value if isinstance(value, int) else None
-        if self:
-            self.left = self.left if self.left != None else Node(father=self)
-            self.right = self.right if self.right != None else Node(
-                father=self)
-        else:
-            self.color = Color.Black
-            self.left = None
-            self.right = None
-
-class RedBlackTree:
+class RedBlackTree():
     def __init__(self):
-        self.root: Node = Node()
-        self.nodes: dict[int, Node] = {hash(self.root): self.root}
+        self.TNULL = Node(0)
+        self.TNULL.color = 0
+        self.TNULL.left = None
+        self.TNULL.right = None
+        self.root = self.TNULL
 
-    def __balance(self, node: Node):
-        if node.grandpa and node.father.is_red:
-            if node.uncle.is_red:
-                node.father.color = Color.Black
-                node.uncle.color = Color.Black
-                node.grandpa.color = Color.Red
-                self.__balance(node.grandpa)
-            elif node.father < node.grandpa:
-                self.__LLturn(node)
-            elif node.father > node.grandpa:
-                self.__RRturn(node)
-        self.root.color = Color.Black
-        self.root.set_position(len(self.nodes))
+    # Preorder
+    def pre_order_helper(self, node):
+        if node != TNULL:
+            sys.stdout.write(node.item + " ")
+            self.pre_order_helper(node.left)
+            self.pre_order_helper(node.right)
 
-    def __black_list_case(self, node: Node):
-        brother = node.brother
-        if not brother:
-            return
-        if brother.is_black:
-            if brother.left.is_black and brother.right.is_black:
-                brother.color = Color.Red
-                if brother.father.is_red:
-                    brother.father.color = Color.Black
+    # Inorder
+    def in_order_helper(self, node):
+        if node != TNULL:
+            self.in_order_helper(node.left)
+            sys.stdout.write(node.item + " ")
+            self.in_order_helper(node.right)
+
+    # Postorder
+    def post_order_helper(self, node):
+        if node != TNULL:
+            self.post_order_helper(node.left)
+            self.post_order_helper(node.right)
+            sys.stdout.write(node.item + " ")
+
+    # Search the tree
+    def search_tree_helper(self, node, key):
+        if node == TNULL or key == node.item:
+            return node
+
+        if key < node.item:
+            return self.search_tree_helper(node.left, key)
+        return self.search_tree_helper(node.right, key)
+
+    # Balancing the tree after deletion
+    def delete_fix(self, x):
+        while x != self.root and x.color == 0:
+            if x == x.parent.left:
+                s = x.parent.right
+                if s.color == 1:
+                    s.color = 0
+                    x.parent.color = 1
+                    self.left_rotate(x.parent)
+                    s = x.parent.right
+
+                if s.left.color == 0 and s.right.color == 0:
+                    s.color = 1
+                    x = x.parent
                 else:
-                    self.__black_list_case(node.father)
-            elif brother.is_left:
-                if brother.right.is_red:
-                    self.__RRturn(brother.right.right)
-                brother.left.color = Color.Black
-                self.__LLturn(brother.left)
+                    if s.right.color == 0:
+                        s.left.color = 0
+                        s.color = 1
+                        self.right_rotate(s)
+                        s = x.parent.right
+
+                    s.color = x.parent.color
+                    x.parent.color = 0
+                    s.right.color = 0
+                    self.left_rotate(x.parent)
+                    x = self.root
             else:
-                if brother.left.is_red:
-                    self.__LLturn(brother.left.left)
-                brother.right.color = Color.Black
-                self.__RRturn(brother.right)
+                s = x.parent.left
+                if s.color == 1:
+                    s.color = 0
+                    x.parent.color = 1
+                    self.right_rotate(x.parent)
+                    s = x.parent.left
+
+                if s.right.color == 0 and s.right.color == 0:
+                    s.color = 1
+                    x = x.parent
+                else:
+                    if s.left.color == 0:
+                        s.right.color = 0
+                        s.color = 1
+                        self.left_rotate(s)
+                        s = x.parent.left
+
+                    s.color = x.parent.color
+                    x.parent.color = 0
+                    s.left.color = 0
+                    self.right_rotate(x.parent)
+                    x = self.root
+        x.color = 0
+
+    def __rb_transplant(self, u, v):
+        if u.parent == None:
+            self.root = v
+        elif u == u.parent.left:
+            u.parent.left = v
         else:
-            if brother.is_left:
-                self.__LLturn(brother.left)
+            u.parent.right = v
+        v.parent = u.parent
+
+    # Node deletion
+    def delete_node_helper(self, node, key):
+        z = self.TNULL
+        while node != self.TNULL:
+            if node.item == key:
+                z = node
+
+            if node.item <= key:
+                node = node.right
             else:
-                self.__RRturn(brother.right)
-            self.__black_list_case(node)
+                node = node.left
 
-    def __LLturn(self, node: Node):
-        if node and node > node.father:
-            self.__RRturn(node.right)
-        father = node.father
-        grandpa = node.grandpa
-        uncle = node.uncle
-        father_right = father.right
-        father.value, grandpa.value = grandpa.value, father.value
-        grandpa.right = grandpa.left
-        grandpa.left = node
-        father.right = uncle
-        father.left = father_right
-        uncle.father = father
-        node.father = grandpa
+        if z == self.TNULL:
+            print("Cannot find key in the tree")
+            return
 
-    def __RRturn(self, node: Node):
-        if node and node < node.father:
-            self.__LLturn(node.left)
-        father = node.father
-        grandpa = node.grandpa
-        uncle = node.uncle
-        father_left = father.left
-        father.value, grandpa.value = grandpa.value, father.value
-        grandpa.left = grandpa.right
-        grandpa.right = node
-        father.left = uncle
-        father.right = father_left
-        uncle.father = father
-        node.father = grandpa
+        y = z
+        y_original_color = y.color
+        if z.left == self.TNULL:
+            x = z.right
+            self.__rb_transplant(z, z.right)
+        elif (z.right == self.TNULL):
+            x = z.left
+            self.__rb_transplant(z, z.left)
+        else:
+            y = self.minimum(z.right)
+            y_original_color = y.color
+            x = y.right
+            if y.parent == z:
+                x.parent = y
+            else:
+                self.__rb_transplant(y, y.right)
+                y.right = z.right
+                y.right.parent = y
 
-    def insert(self, value: int):
-        node = self.search(value)
-        if node: 
-            raise ValueError(f'Value {value} already exists in the tree')
-        node.value = value
-        node.color = Color.Red
-        self.nodes[hash(node.right)] = node.right
-        self.nodes[hash(node.left)] = node.left
-        self.__balance(node)
+            self.__rb_transplant(z, y)
+            y.left = z.left
+            y.left.parent = y
+            y.color = z.color
+        if y_original_color == 0:
+            self.delete_fix(x)
 
-    def insert_from(self, values: list[int]):
-        for value in values:
-            self.insert(value)
+    # Balance the tree after insertion
+    def fix_insert(self, k):
+        while k.parent.color == 1:
+            if k.parent == k.parent.parent.right:
+                u = k.parent.parent.left
+                if u.color == 1:
+                    u.color = 0
+                    k.parent.color = 0
+                    k.parent.parent.color = 1
+                    k = k.parent.parent
+                else:
+                    if k == k.parent.left:
+                        k = k.parent
+                        self.right_rotate(k)
+                    k.parent.color = 0
+                    k.parent.parent.color = 1
+                    self.left_rotate(k.parent.parent)
+            else:
+                u = k.parent.parent.right
 
-    def delete(self, obj: int | Node):
-        node = obj if isinstance(obj, Node) else self.search(obj)
-        if not node:
-            raise ValueError(f'Value {obj} not exists in tree')
-        elif node.children_count == 0:
-            if node.is_black:
-                self.__black_list_case(node)
-            self.nodes.pop(hash(node.left))
-            self.nodes.pop(hash(node.right))
-            node.value = None
-        elif node.children_count == 1:
-            node_child = node.left or node.right
-            node.value, node_child.value = node_child.value, node.value
-            self.delete(node_child)
-        elif node.children_count == 2:
-            max_right_child = node.left
-            while max_right_child.right:
-                max_right_child = max_right_child.right
-            node.value = max_right_child.value
-            self.delete(max_right_child)
-        self.root.set_position(len(self.nodes))
+                if u.color == 1:
+                    u.color = 0
+                    k.parent.color = 0
+                    k.parent.parent.color = 1
+                    k = k.parent.parent
+                else:
+                    if k == k.parent.right:
+                        k = k.parent
+                        self.left_rotate(k)
+                    k.parent.color = 0
+                    k.parent.parent.color = 1
+                    self.right_rotate(k.parent.parent)
+            if k == self.root:
+                break
+        self.root.color = 0
 
-    def delete_from(self, values: list[int]):
-        for value in values:
-            self.delete(value)
+    # Printing the tree
+    def __print_helper(self, node, indent, last):
+        if node != self.TNULL:
+            sys.stdout.write(indent)
+            if last:
+                sys.stdout.write("R----")
+                indent += "     "
+            else:
+                sys.stdout.write("L----")
+                indent += "|    "
 
-    def search(self, value: int) -> Node:
-        node = self.root
-        while node and node != value:
-            node = node.child(value)
+            s_color = "RED" if node.color == 1 else "BLACK"
+            print(str(node.item) + "(" + s_color + ")")
+            self.__print_helper(node.left, indent, False)
+            self.__print_helper(node.right, indent, True)
+
+    def preorder(self):
+        self.pre_order_helper(self.root)
+
+    def inorder(self):
+        self.in_order_helper(self.root)
+
+    def postorder(self):
+        self.post_order_helper(self.root)
+
+    def searchTree(self, k):
+        return self.search_tree_helper(self.root, k)
+
+    def minimum(self, node):
+        while node.left != self.TNULL:
+            node = node.left
         return node
 
-    def realize(self, font_size: int = 10, node_size: int = 500):
-        g = nx.DiGraph()
-        g.add_nodes_from(self.nodes.values())
-        g.add_edges_from(self.edges)
-        options = {
-            "edgecolors": "black",
-            "font_color": "white",
-            "font_size": font_size,
-            "node_color": self.colors,
-            "node_size": node_size,
-            "width": 4,
-        }
-        return g, self.positions, options
+    def maximum(self, node):
+        while node.right != self.TNULL:
+            node = node.right
+        return node
 
-    @property
-    def colors(self) -> list[str]:
-        return [node.color.value for node in self.nodes.values()]
+    def successor(self, x):
+        if x.right != self.TNULL:
+            return self.minimum(x.right)
 
-    @property
-    def edges(self) -> list[tuple[Node]]:
-        return [(node, child) for node in self.nodes.values() for child in [node.right, node.left] if node]
+        y = x.parent
+        while y != self.TNULL and x == y.right:
+            x = y
+            y = y.parent
+        return y
 
-    @property
-    def positions(self) -> dict[Node, tuple[int]]:
-        return {node: node.position.value for node in self.nodes.values()}
+    def predecessor(self,  x):
+        if (x.left != self.TNULL):
+            return self.maximum(x.left)
+
+        y = x.parent
+        while y != self.TNULL and x == y.left:
+            x = y
+            y = y.parent
+
+        return y
+
+    def left_rotate(self, x):
+        y = x.right
+        x.right = y.left
+        if y.left != self.TNULL:
+            y.left.parent = x
+
+        y.parent = x.parent
+        if x.parent == None:
+            self.root = y
+        elif x == x.parent.left:
+            x.parent.left = y
+        else:
+            x.parent.right = y
+        y.left = x
+        x.parent = y
+
+    def right_rotate(self, x):
+        y = x.left
+        x.left = y.right
+        if y.right != self.TNULL:
+            y.right.parent = x
+
+        y.parent = x.parent
+        if x.parent == None:
+            self.root = y
+        elif x == x.parent.right:
+            x.parent.right = y
+        else:
+            x.parent.left = y
+        y.right = x
+        x.parent = y
+
+    def insert(self, key):
+        node = Node(key)
+        node.parent = None
+        node.item = key
+        node.left = self.TNULL
+        node.right = self.TNULL
+        node.color = 1
+
+        y = None
+        x = self.root
+
+        while x != self.TNULL:
+            y = x
+            if node.item < x.item:
+                x = x.left
+            else:
+                x = x.right
+
+        node.parent = y
+        if y == None:
+            self.root = node
+        elif node.item < y.item:
+            y.left = node
+        else:
+            y.right = node
+
+        if node.parent == None:
+            node.color = 0
+            return
+
+        if node.parent.parent == None:
+            return
+
+        self.fix_insert(node)
+
+    def get_root(self):
+        return self.root
+
+    def delete_node(self, item):
+        self.delete_node_helper(self.root, item)
+
+    def print_tree(self):
+        self.__print_helper(self.root, "", True)
+
+
+if __name__ == "__main__":
+    bst = RedBlackTree()
+
+    bst.insert(55)
+    bst.insert(40)
+    bst.insert(65)
+    bst.insert(60)
+    bst.insert(75)
+    bst.insert(57)
+
+    bst.print_tree()
+
+    print("\nAfter deleting an element")
+    bst.delete_node(40)
+    bst.print_tree()
+
 
 session = st.session_state
 

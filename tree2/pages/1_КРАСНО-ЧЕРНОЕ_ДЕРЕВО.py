@@ -309,6 +309,8 @@ class RedBlackTree():
     def delete(self, item):
         self.delete_node_helper(self.root, item)
 ################
+st.title("Red-Black Tree Operations")
+tree = RedBlackTree()  
 
 def visualize_red_black_tree_dot_helper(node, dot, tree):
     if node is not None:
@@ -323,8 +325,7 @@ def visualize_red_black_tree_dot_helper(node, dot, tree):
 
 # Streamlit app
 
-st.title("Red-Black Tree Operations")
-tree = RedBlackTree()  # Instantiate RedBlackTree
+# Instantiate RedBlackTree
 
 
 
